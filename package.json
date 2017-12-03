@@ -1,6 +1,6 @@
 {
   "name": "email-crawler",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "\"a service for scraping emails from a webpage, given the number of levels to reach",
   "main": "scraper.js",
   "directories": {
