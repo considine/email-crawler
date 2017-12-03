@@ -7,6 +7,8 @@
 var rp = require("request-promise");
 const cheerio = require('cheerio');
 
+
+var filterer = require("./email-filterer.js")
 var HtmlParser = require("./html-parser-utils.js");
 var QueueManager = require("node-asyncqueue");
 var unique = require("array-unique");
@@ -52,7 +54,7 @@ function WebsiteEmailScraper (domain) {
 
 
     return p.then(() => {
-      return unique(emails);
+      return filterer.filterEmails(unique(emails));
     });
   }
 
