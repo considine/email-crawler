@@ -1,0 +1,43 @@
+{
+  "name": "email-crawler",
+  "version": "1.0.0",
+  "description": "\"a service for scraping emails from a webpage, given the number of levels to reach",
+  "main": "scraper.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha tests/test-email-scraper.js --timeout=15000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/considine/email-crawler.git"
+  },
+  "keywords": [
+    "email",
+    "crawler",
+    "web",
+    "scraper",
+    "spider",
+    "extractor"
+  ],
+  "author": "Jack Considine <jackconsidine3@gmail.com> (jackconsidine.wordpress.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/considine/email-crawler/issues"
+  },
+  "homepage": "https://github.com/considine/email-crawler#readme",
+  "devDependencies": {
+    "jasmine": "^2.8.0",
+    "jasmine-node": "^2.0.0",
+    "mocha": "^4.0.1"
+  },
+  "dependencies": {
+    "array-unique": "^0.3.2",
+    "cheerio": "^1.0.0-rc.2",
+    "node-asyncqueue": "^1.0.0",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "underscore": "^1.8.3"
+  }
+}
