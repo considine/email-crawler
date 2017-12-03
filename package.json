@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha tests/test-email-scraper.js --timeout=15000"
+    "test": "./node_modules/mocha/bin/mocha tests/test-email-scraper.js --timeout=15000 && ./node_modules/jasmine-node/bin/jasmine-node spec"
   },
   "repository": {
     "type": "git",
