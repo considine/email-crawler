@@ -8,6 +8,7 @@ npm install email-crawler
 
 ## USAGE
 ```javascript
+var Scraper = require("email-crawler");
 var emailscraper = new Scraper("https://koptional.com");
 // A level is how far removed (in  terms of link clicks) a page is from the root page (only follows same domain routes)
 emailscraper.getLevels(2).then((emails) => {
