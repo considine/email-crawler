@@ -7,6 +7,14 @@
 var rp = require("request-promise");
 const cheerio = require('cheerio');
 
+const EventEmitter = require('events');
+const endExecution = new EventEmitter();
+// endExecution.on('event', () => {
+//   console.log('an event occurred!');
+// });
+// endExecution.emit('event');
+
+
 
 var filterer = require("./email-filterer.js")
 var HtmlParser = require("./html-parser-utils.js");
@@ -17,6 +25,7 @@ var unique = require("array-unique");
 
 function WebsiteEmailScraper (domain) {
   /* private */
+  var DEFAULT_TIMEOUT = 6000;
   /**
    * List of websites that are to be crawled
    * @type {Array}
@@ -40,22 +49,40 @@ function WebsiteEmailScraper (domain) {
    */
   var currentLevel = 0;
 
-  this.getLevels = function(numLevels) {
-
+  this.getLevels = function(numLevels, maxTimeout) {
+    if (numLevels === 0) return [];
+    if (! maxTimeout ) maxTimeout = DEFAULT_TIMEOUT;
     var levels = [];
-    var p = new Promise(function(resolve, reject) {resolve();});
+    return new Promise(function(resolve, reject) {
 
 
-    for (var i=0; i<numLevels; i++) {
-      p = p.then(() => {
-
-      }).then(getLevel);
-    }
 
 
-    return p.then(() => {
-      return filterer.filterEmails(unique(emails));
+      var curLevel = 0;
+      setTimeout(function() {
+        curLevel = numLevels;
+        endExecution.emit("finished-level");
+      }, maxTimeout)
+
+      endExecution.on("finished-level", function () {
+        if (curLevel >= numLevels) return resolve(filterer.filterEmails(unique(emails)));
+        getLevel().then(() => {
+          endExecution.emit("finished-level");
+        })
+        .catch((e) => {
+          reject(e);
+        });
+        curLevel+=1;
+      });
+
+      endExecution.emit("finished-level");
     });
+
+    // for (var i=0; i<numLevels; i++) {
+    //   p = p.then(() => {
+    //
+    //   }).then(getLevel);
+    // }
   }
 
 

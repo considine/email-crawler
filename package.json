@@ -35,6 +35,7 @@
   "dependencies": {
     "array-unique": "^0.3.2",
     "cheerio": "^1.0.0-rc.2",
+    "events": "^1.1.1",
     "node-asyncqueue": "^1.0.0",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
