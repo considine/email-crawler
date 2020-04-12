@@ -20,7 +20,6 @@ module.exports = function(htmlStr, domain) {
       var $ = cheerio.load(htmlStr);
       var navLinks = prepareExtractedLinks($, "nav a");
       if (navLinks.length === 0) return prepareExtractedLinks($, "a");
-      console.log("using nav links");
       return navLinks;
     };
 
