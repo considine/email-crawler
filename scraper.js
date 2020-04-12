@@ -12,10 +12,14 @@ function WebsiteEmailScraper (domain) {
   var emails = [];
 
   let currentLevel = 1;
+  let timeout = 5000;
 
-  this.getLevels = async function(maxLevel, timeout = 5000) {
+  this.getLevels = async function(maxLevel, newTimeout) {
     if (maxLevel === 0) return [];    
     let stop = false;
+
+    timeout = newTimeout || timeout;
+
     let execTimeout = setTimeout(() => {
       stop = true;
     }, timeout);
@@ -42,7 +46,7 @@ function WebsiteEmailScraper (domain) {
       if (pastCrawled.indexOf(url) === -1) {
         promises.push(new Promise(async (resolve) => {
           try {
-            const htmlString = await rp({url, headers : {'User-Agent' : 'request'}})
+            const htmlString = await rp({url, headers : {'User-Agent' : 'request'}, timeout})
             parser = new HtmlParser(htmlString, domain);
             newLinks = unique(newLinks.concat(parser.extractLinks()));
             emails = emails.concat(parser.extractEmails());   
