@@ -40,7 +40,7 @@ function WebsiteEmailScraper (domain) {
     for (let url of websiteQueue) {
       if (pastCrawled.indexOf(url) === -1) {
         promises.push(new Promise(async (resolve) => {
-          console.log(`parse ${url}`);
+          //console.log(`parse ${url}`);
           const htmlString = await rp({url, headers : {'User-Agent' : 'request'}})
           pastCrawled.push(url);
           parser = new HtmlParser(htmlString, domain);
