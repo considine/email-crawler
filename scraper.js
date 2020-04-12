@@ -1,98 +1,65 @@
-/**
-* @author Jack Considine <jackconsidine3@gmail.com>
-* @package
-* 2017-11-20
-*/
-
 var rp = require("request-promise");
-const cheerio = require('cheerio');
-
-
 var filterer = require("./email-filterer.js")
 var HtmlParser = require("./html-parser-utils.js");
-var QueueManager = require("node-asyncqueue");
 var unique = require("array-unique");
-// Asynchronously resolve a list of asynchronous tasks using promises
-// var asyncQueue = require("async-queue");
 
 function WebsiteEmailScraper (domain) {
-  /* private */
-  /**
-   * List of websites that are to be crawled
-   * @type {Array}
-   */
   var websiteQueue = [
     domain
   ];
-
-  /**
-   * Prevents repeats from being crawled
-   * @type {Array}
-   */
   var pastCrawled = [];
-
-
   var emails = [];
 
-  /**
-   * How many times this crawler has recursed on links it has found
-   * @type {Number}
-   */
-  var currentLevel = 0;
+  let currentLevel = 1;
 
-  this.getLevels = function(numLevels) {
+  this.getLevels = async function(maxLevel, timeout = 5000) {
+    if (maxLevel === 0) return [];    
+    let stop = false;
+    let execTimeout = setTimeout(() => {
+      stop = true;
+    }, timeout);
 
-    var levels = [];
-    var p = new Promise(function(resolve, reject) {resolve();});
-
-
-    for (var i=0; i<numLevels; i++) {
-      p = p.then(() => {
-
-      }).then(getLevel);
+    try {
+      while(currentLevel <= maxLevel) {
+        if(stop) break;
+        await getLevel();
+        currentLevel ++;
+      }  
+    } catch (error) {
+      throw error;
     }
-
-
-    return p.then(() => {
-      return filterer.filterEmails(unique(emails));
-    });
+    
+    clearTimeout(execTimeout);
+    return filterer.filterEmails(unique(emails));
   }
 
-
-  /* public */
-  function getLevel () {
+  // async parallels requests
+  async function getLevel () {
     var newLinks = [];
-    var promiseQueue = [new Promise(function(resolve, reject) {resolve();})];
-
-    for (var i=0; i<websiteQueue.length; i++) {
-
-      promiseQueue.push(
-        rp({url : websiteQueue[i], headers : {'User-Agent' : 'request'}}).then((htmlString) => {
+    const promises = [];
+    for (let url of websiteQueue) {
+      if (pastCrawled.indexOf(url) === -1) {
+        promises.push(new Promise(async (resolve) => {
+          console.log(`parse ${url}`);
+          const htmlString = await rp({url, headers : {'User-Agent' : 'request'}})
+          pastCrawled.push(url);
           parser = new HtmlParser(htmlString, domain);
-          newLinks = newLinks.concat(parser.extractLinks());
-          console.log("num liinks: " + newLinks.length);
+          newLinks = unique(newLinks.concat(parser.extractLinks()));
           emails = emails.concat(parser.extractEmails());
-
-        })
-        .catch((e) => {
-          throw new Error("Error with rp: " + e);
-        })
-      );
-    }
-    // Async Queue, get all
-    return QueueManager.asyncFunctionQueue(promiseQueue, true).then(() =>{
-      currentLevel ++;
-      websiteQueue = [];
-      for (var i=0; i<newLinks.length; i++) {
-        // add next level of links
-        if (pastCrawled.indexOf(newLinks[i]) === -1) websiteQueue.push(newLinks[i]);
+          resolve();
+        }));
       }
-    });
+    }
 
-    // crawl, add all pages to website queue
+    await Promise.all(promises);
+    
+    websiteQueue = [];
+    for (var i=0; i<newLinks.length; i++) {
+      if (pastCrawled.indexOf(newLinks[i]) === -1) websiteQueue.push(newLinks[i]);
+    }
+
+    websiteQueue = unique(websiteQueue);
   }
-
-
 }
 
 module.exports = WebsiteEmailScraper;
