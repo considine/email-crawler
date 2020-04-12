@@ -37,6 +37,7 @@
     "cheerio": "^1.0.0-rc.3",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
-    "underscore": "^1.10.2"
+    "underscore": "^1.10.2",
+    "validator": "^13.0.0"
   }
 }

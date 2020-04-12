@@ -1,8 +1,5 @@
 var cheerio = require("cheerio");
-var emailregexp = require("./email-regexp");
 var unique = require("array-unique");
-
-
 
 const LINKS_LIMIT = 20;
 

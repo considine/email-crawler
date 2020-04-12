@@ -1,7 +1,8 @@
 var rp = require("request-promise");
-var filterer = require("./email-filterer.js")
 var HtmlParser = require("./html-parser-utils.js");
 var unique = require("array-unique");
+var validator = require("validator");
+
 
 function WebsiteEmailScraper (domain) {
   var websiteQueue = [
@@ -30,7 +31,7 @@ function WebsiteEmailScraper (domain) {
     }
     
     clearTimeout(execTimeout);
-    return filterer.filterEmails(unique(emails));
+    return unique(emails).filter(email => validator.isEmail(email));
   }
 
   // async parallels requests
