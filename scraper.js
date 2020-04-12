@@ -48,8 +48,8 @@ function WebsiteEmailScraper (domain) {
           try {
             const htmlString = await rp({url, headers : {'User-Agent' : 'request'}, timeout})
             parser = new HtmlParser(htmlString, domain);
-            newLinks = unique(newLinks.concat(parser.extractLinks()));
-            emails = emails.concat(parser.extractEmails());   
+            newLinks.push(...parser.extractLinks());
+            emails.push(...parser.extractEmails());   
           } catch (error) {}
 
           pastCrawled.push(url);
