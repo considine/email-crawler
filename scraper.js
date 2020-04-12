@@ -40,13 +40,16 @@ function WebsiteEmailScraper (domain) {
     for (let url of websiteQueue) {
       if (pastCrawled.indexOf(url) === -1) {
         promises.push(new Promise(async (resolve) => {
-          //console.log(`parse ${url}`);
-          const htmlString = await rp({url, headers : {'User-Agent' : 'request'}})
+          try {
+            const htmlString = await rp({url, headers : {'User-Agent' : 'request'}})
+            parser = new HtmlParser(htmlString, domain);
+            newLinks = unique(newLinks.concat(parser.extractLinks()));
+            emails = emails.concat(parser.extractEmails());   
+          } catch (error) {}
+
           pastCrawled.push(url);
-          parser = new HtmlParser(htmlString, domain);
-          newLinks = unique(newLinks.concat(parser.extractLinks()));
-          emails = emails.concat(parser.extractEmails());
           resolve();
+
         }));
       }
     }
