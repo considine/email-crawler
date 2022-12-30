@@ -30,7 +30,7 @@
   "devDependencies": {
     "jasmine": "^2.99.0",
     "jasmine-node": "^3.0.0",
-    "mocha": "^7.1.1"
+    "mocha": "^10.2.0"
   },
   "dependencies": {
     "array-unique": "^0.3.2",
